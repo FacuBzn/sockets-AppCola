@@ -8,12 +8,15 @@ const socketController = (socket) => { // Controlador que va a manejar toda la i
     
     /*socket.on('disconnect', () => {}); */
 
-    socket.on('enviar-mensaje', ( payload, callback ) => {
-        
-        const id = 123456789;
-        callback( id );
+    //TODO:notificar que hay un nuevo ticket pendiente de asignar
+    socket.emit( 'ultimo-ticket', ticketControl.ultimo ); //emitir un mensaje solo a la persona que se esta conectando
 
-        socket.broadcast.emit('enviar-mensaje', payload );
+
+    socket.on('siguiente-ticket', ( payload, callback ) => { // 'enviar-mensaje' es el nombre que se le da al evento 
+
+        const siguiente = ticketControl.siguiente();
+        callback( siguiente ); //El callback manda un objeto String que es el ticket.numero
+
 
     })
 

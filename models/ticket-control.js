@@ -48,7 +48,7 @@ class TickeControl {
     }
 
     guardarDB() { // Forma de grabar en la base de datos.
-        //:TODO hacer la carpeta db que permita accesos a lectura y escritura
+        //TODO: hacer la carpeta db que permita accesos a lectura y escritura
         const dbPath = path.join( __dirname, '../db/data.json');
         fs.writeFileSync(dbPath, JSON.stringify(this.toJson)); //Se graba el dbPath y un string en este caso como data.json es un "JSON" 
         //y no un string se utiliza una propiedad de JSON el "Stringify"
@@ -62,7 +62,7 @@ class TickeControl {
         this.tickets.push( ticket );
         this.guardarDB();
 
-        return 'Ticket es:' + ticket.numero;
+        return 'Ticket ' + ticket.numero;
 
     }
 
