@@ -7,16 +7,18 @@ const ticketControl = new TickeControl(); // Esta es una instancia que va a ser 
 const socketController = (socket) => { // Controlador que va a manejar toda la informacion de Sockets    
     /*socket.on('disconnect', () => {}); */
 
+    // Cuando un cliente se conecta
     socket.emit( 'ultimo-ticket', ticketControl.ultimo ); //emitir un mensaje solo a la persona que se esta conectando
     socket.emit( 'estado-actual', ticketControl.ultimos4 ); //cuando el socket se conecte emito el "estado-actual"
-    
-    
+    socket.emit('tickets-pendientes', ticketControl.tickets.length); 
+
     socket.on('siguiente-ticket', ( payload, callback ) => { // 'enviar-mensaje' es el nombre que se le da al evento 
         
         const siguiente = ticketControl.siguiente();
         callback( siguiente ); //El callback manda un objeto String que es el ticket.numero
-
+        
         //todo:notificar que hay un nuevo ticket pendiente de asignar
+        socket.broadcast.emit('tickets-pendientes', ticketControl.tickets.length);
     });
 
     socket.on('atender-ticket', ( {escritorio} , callback ) => { // 'atender-ticket' es el nombre que se le da al evento 
@@ -35,6 +37,9 @@ const socketController = (socket) => { // Controlador que va a manejar toda la i
 
         //todo: Notificar cambio en los ultimos 4
         socket.broadcast.emit( 'estado-actual', ticketControl.ultimos4 );
+
+        socket.emit('tickets-pendientes', ticketControl.tickets.length); //
+        socket.broadcast.emit('tickets-pendientes', ticketControl.tickets.length); // Emita a todos menos al cliente emitido        
         
         if ( !ticket ) { // si ticket no existiera voy a llamar al callback
             callback({

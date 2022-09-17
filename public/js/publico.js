@@ -17,6 +17,11 @@ const socket = io();
 
 
 socket.on('estado-actual', ( payload ) => { // voy a escuchar el evento "estado-actual"
+
+
+    const audio = new Audio('./audio/new-ticket.mp3');
+    audio.play();
+
     const [ ticket1, ticket2, ticket3, ticket4 ] = payload;
 
     if( ticket1 ){

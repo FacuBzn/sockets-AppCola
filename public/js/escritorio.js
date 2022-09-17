@@ -3,6 +3,7 @@ const lblEscritorio = document.querySelector('h1'); //el primero h1 que encuentr
 const btnAtender = document.querySelector('button');
 const lblTicket = document.querySelector('small');
 const divAlerta = document.querySelector('.alert');
+const lblPendientes = document.querySelector('#lblPendientes'); //por el id
 
 
 
@@ -32,8 +33,15 @@ socket.on('disconnect', () => {
     btnAtender.disabled = true; //Si se desconecta o no esta conectado mi servidor no voy a poder hacer click o disparar sobre ese boton
 });
 
-socket.on('ultimo-ticket', ( ultimo ) => {
-    
+socket.on('tickets-pendientes', ( pendientes ) => {
+    console.log(pendientes);
+    if (pendientes === 0) {
+        lblPendientes.style.display = 'none';
+    }
+    else{
+        lblPendientes.style.display = '';
+        lblPendientes.innerText = pendientes;
+    }
 });
 
 btnAtender.addEventListener( 'click', () => {
