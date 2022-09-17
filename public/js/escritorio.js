@@ -1,6 +1,8 @@
 //Referencias HTML
 const lblEscritorio = document.querySelector('h1'); //el primero h1 que encuentre
 const btnAtender = document.querySelector('button');
+const lblTicket = document.querySelector('small');
+const divAlerta = document.querySelector('.alert');
 
 
 
@@ -17,6 +19,8 @@ const escritorio = searchParams.get('escritorio');
 lblEscritorio.innerText = escritorio; // asigno al escritorio
 
 
+divAlerta.style.display = 'none'; // para que no aparezca la alerta en el front
+
 const socket = io();
 
 
@@ -29,14 +33,24 @@ socket.on('disconnect', () => {
 });
 
 socket.on('ultimo-ticket', ( ultimo ) => {
-
+    
 });
 
 btnAtender.addEventListener( 'click', () => {
       
-    socket.emit( 'siguiente-ticket', null, ( ticket ) => { // emitir ese mensaje, debe ser el mismo que esta en el controlador "siguiente-ticket"
+    socket.emit('atender-ticket', {escritorio},( { ok, ticket, msg} ) => { // le estoy mandando dentro del payload el escritorio como un objeto
+       
+        if ( !ok ){ // si el ok no es true ( no viene )
+            lblTicket.innerText = 'Nadie ';
+            return divAlerta.style.display = '' ;
+        }
+        
+        lblTicket.innerText = 'Ticket ' + ticket.numero; 
 
     });
+
+    /* socket.emit( 'siguiente-ticket', null, ( ticket ) => { // emitir ese mensaje, debe ser el mismo que esta en el controlador "siguiente-ticket"
+    }); */
 
 });
 

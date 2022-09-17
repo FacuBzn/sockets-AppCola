@@ -16,9 +16,46 @@ const socketController = (socket) => { // Controlador que va a manejar toda la i
 
         const siguiente = ticketControl.siguiente();
         callback( siguiente ); //El callback manda un objeto String que es el ticket.numero
+    });
+
+    socket.on('atender-ticket', ( {escritorio} , callback ) => { // 'atender-ticket' es el nombre que se le da al evento 
+        /* console.log(payload); */
+        /* console.log(payload.escritorio); */
+
+        if ( !escritorio ) { // si el escritorio no viene devolver el sgte objeto por si no lo trae.
+            return callback({
+                ok: false,
+                msg: 'El escritorio es obligatorio'
+            });
+        }
+
+        //cual es el ticket que debo atender
+        const ticket = ticketControl.atenderTicket( escritorio );
+
+        //TODO: Notificar cambio en los ultimos 4
+
+        
+        if ( !ticket ) { // si ticket no existiera voy a llamar al callback
+            callback({
+                ok: false, // no se hizo correctamente
+                msg: 'Ya no hay tickets pendientes'
+            });
+        } 
+        else {
+            callback({
+                ok:true,
+                ticket // El ticket que tenemos asignado aca
+            })
+        }
 
 
-    })
+
+
+    });
+
+    
+
+
 
 }
 
