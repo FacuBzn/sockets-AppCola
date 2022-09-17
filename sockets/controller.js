@@ -4,18 +4,19 @@ const TickeControl = require('../models/ticket-control');
 const ticketControl = new TickeControl(); // Esta es una instancia que va a ser unica, cada vez que se reinicializa su backend
 
 
-const socketController = (socket) => { // Controlador que va a manejar toda la informacion de Sockets
-    
+const socketController = (socket) => { // Controlador que va a manejar toda la informacion de Sockets    
     /*socket.on('disconnect', () => {}); */
 
-    //TODO:notificar que hay un nuevo ticket pendiente de asignar
     socket.emit( 'ultimo-ticket', ticketControl.ultimo ); //emitir un mensaje solo a la persona que se esta conectando
-
-
+    socket.emit( 'estado-actual', ticketControl.ultimos4 ); //cuando el socket se conecte emito el "estado-actual"
+    
+    
     socket.on('siguiente-ticket', ( payload, callback ) => { // 'enviar-mensaje' es el nombre que se le da al evento 
-
+        
         const siguiente = ticketControl.siguiente();
         callback( siguiente ); //El callback manda un objeto String que es el ticket.numero
+
+        //todo:notificar que hay un nuevo ticket pendiente de asignar
     });
 
     socket.on('atender-ticket', ( {escritorio} , callback ) => { // 'atender-ticket' es el nombre que se le da al evento 
@@ -32,8 +33,8 @@ const socketController = (socket) => { // Controlador que va a manejar toda la i
         //cual es el ticket que debo atender
         const ticket = ticketControl.atenderTicket( escritorio );
 
-        //TODO: Notificar cambio en los ultimos 4
-
+        //todo: Notificar cambio en los ultimos 4
+        socket.broadcast.emit( 'estado-actual', ticketControl.ultimos4 );
         
         if ( !ticket ) { // si ticket no existiera voy a llamar al callback
             callback({
